@@ -1,0 +1,33 @@
+# Azure Excel Compatibility Lab - Example Variables
+# Copy this file to terraform.tfvars and fill in your values
+
+# Azure region (default: eastus)
+# location = "eastus"
+
+# VM configuration
+# vm_size = "Standard_B2s"
+
+# Admin credentials (REQUIRED - set these!)
+admin_username = "exceladmin"
+admin_password = "YourSecurePassword123!"  # Change this!
+
+# Excel version to install (2016, 2019, or 2021)
+excel_version = "2019"
+
+# Use Spot VM for cost savings (default: true)
+# Set to false if you need guaranteed availability
+# use_spot_vm = true
+
+# Auto-shutdown time (24-hour format, UTC)
+# Default: 1900 (7 PM UTC)
+# auto_shutdown_time = "1900"
+
+# Enable auto-shutdown (default: true)
+# auto_shutdown_enabled = true
+
+# Custom tags
+# tags = {
+#   Environment = "Testing"
+#   Project     = "Excel-Compatibility-Lab"
+#   Owner       = "your-name"
+# }
