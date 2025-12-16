@@ -33,6 +33,7 @@ azure_sandbox/
 ├── scripts/             # Helper scripts
 │   ├── deploy.sh       # Deploy VM script
 │   ├── destroy.sh      # Destroy VM script
+│   ├── status.sh       # Check deployment status
 │   └── install-excel.ps1  # PowerShell script for Excel installation
 └── doc/
     └── Plan.md         # Detailed implementation plan
@@ -40,47 +41,45 @@ azure_sandbox/
 
 ## Quick Start
 
-### 1. Azure Setup
+### 1. Deploy a Test VM
 
 ```bash
-# Login to Azure
-az login
+# Deploy VM with Excel 2019 (default)
+./scripts/deploy.sh
 
-# Set your subscription (if you have multiple)
-az account set --subscription "Your Subscription Name"
+# Or deploy with a specific Excel version
+./scripts/deploy.sh 2016
+./scripts/deploy.sh 2021
+
+# You can also specify the Azure region (default: eastus)
+./scripts/deploy.sh 2019 westus
 ```
 
-### 2. Deploy a Test VM
+The deploy script will:
+- Check prerequisites (Azure CLI, Terraform)
+- Prompt for Azure login if needed
+- Generate a random admin password (saved to terraform.tfvars)
+- Deploy the VM and show connection details
+
+### 2. Check Status
 
 ```bash
-# Initialize Terraform
-cd terraform
-terraform init
-
-# Deploy VM with Excel 2019 (default)
-terraform apply -var="excel_version=2019"
-
-# Or deploy with different Excel version
-terraform apply -var="excel_version=2016"
-terraform apply -var="excel_version=2021"
+# View current deployment status and connection info
+./scripts/status.sh
 ```
 
 ### 3. Connect and Test
 
-```bash
-# Get the VM's public IP
-terraform output public_ip
-
-# Connect via RDP using the IP address
-# Default credentials are in terraform outputs
-```
+Connect via RDP using the public IP shown in the deployment output. The script will display credentials and next steps for installing Excel on the VM.
 
 ### 4. Clean Up (IMPORTANT!)
 
 ```bash
-# Always destroy the VM after testing to avoid charges
-terraform destroy
+# Destroy all resources when done
+./scripts/destroy.sh
 ```
+
+This will prompt for confirmation and optionally clean up local Terraform files.
 
 ## Excel Versions
 
