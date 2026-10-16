@@ -38,6 +38,15 @@ fi
 
 echo ""
 echo -e "${YELLOW}Destroying resources...${NC}"
+
+# Azure refuses to delete VM extensions while the VM is stopped/deallocated
+# (e.g. after a Spot eviction). Extensions are removed with the VM anyway,
+# so drop them from state instead of deleting them individually.
+for ext in $(terraform state list 2>/dev/null | grep '^azurerm_virtual_machine_extension\.' || true); do
+    echo "Removing $ext from state (deleted together with the VM)"
+    terraform state rm "$ext" >/dev/null
+done
+
 terraform destroy -auto-approve
 
 echo ""
