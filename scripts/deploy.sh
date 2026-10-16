@@ -10,6 +10,8 @@ TERRAFORM_DIR="$SCRIPT_DIR/../terraform"
 # Default values
 EXCEL_VERSION="${1:-2019}"
 LOCATION="${2:-eastus}"
+VM_SIZE="${3:-Standard_D2s_v3}"
+USE_SPOT="${4:-true}"
 
 # Colors for output
 RED='\033[0;31m'
@@ -18,7 +20,10 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 echo -e "${GREEN}=== Azure Excel Compatibility Lab ===${NC}"
-echo -e "Deploying VM with Excel $EXCEL_VERSION"
+echo -e "Excel version: $EXCEL_VERSION"
+echo -e "Location:      $LOCATION"
+echo -e "VM size:       $VM_SIZE"
+echo -e "Spot VM:       $USE_SPOT"
 echo ""
 
 # Check prerequisites
@@ -90,7 +95,7 @@ deploy() {
 
     echo ""
     echo -e "${YELLOW}Planning deployment...${NC}"
-    terraform plan -var="excel_version=$EXCEL_VERSION" -var="location=$LOCATION" -out=tfplan
+    terraform plan -var="excel_version=$EXCEL_VERSION" -var="location=$LOCATION" -var="vm_size=$VM_SIZE" -var="use_spot_vm=$USE_SPOT" -out=tfplan
 
     echo ""
     echo -e "${YELLOW}Applying deployment...${NC}"

@@ -31,10 +31,11 @@ azure_sandbox/
 │   ├── excel2019.xml   # Excel 2019 configuration
 │   └── excel2021.xml   # Excel 2021 configuration
 ├── scripts/             # Helper scripts
-│   ├── deploy.sh       # Deploy VM script
-│   ├── destroy.sh      # Destroy VM script
-│   ├── status.sh       # Check deployment status
-│   └── install-excel.ps1  # PowerShell script for Excel installation
+│   ├── deploy.sh           # Deploy VM script
+│   ├── destroy.sh          # Destroy VM script
+│   ├── status.sh           # Check deployment status
+│   ├── check-availability.sh # Check VM sizes across regions
+│   └── install-excel.ps1   # PowerShell script for Excel installation
 └── doc/
     └── Plan.md         # Detailed implementation plan
 ```
@@ -53,7 +54,22 @@ azure_sandbox/
 
 # You can also specify the Azure region (default: eastus)
 ./scripts/deploy.sh 2019 westus
+
+# And VM size if the default isn't available in your region
+./scripts/deploy.sh 2019 eastus Standard_D2as_v5
+
+# Use a regular VM (no eviction risk, but more expensive)
+./scripts/deploy.sh 2019 eastus Standard_D2s_v3 false
 ```
+
+**Usage:** `./scripts/deploy.sh [excel_version] [location] [vm_size] [use_spot]`
+
+| Parameter | Default | Options |
+|-----------|---------|---------|
+| excel_version | 2019 | 2016, 2019, 2021 |
+| location | eastus | Any Azure region |
+| vm_size | Standard_D2s_v3 | Standard_D2s_v4, Standard_D2as_v5, Standard_B2ms, etc. |
+| use_spot | true | true (cheaper, can be evicted), false (stable, more expensive) |
 
 The deploy script will:
 - Check prerequisites (Azure CLI, Terraform)
@@ -93,7 +109,7 @@ This will prompt for confirmation and optionally clean up local Terraform files.
 
 - **Spot VMs**: Up to 90% cheaper than regular VMs
 - **Pay-per-minute**: Only charged for active compute time
-- **Auto-shutdown**: VMs configured to auto-shutdown after 2 hours
+- **Auto-shutdown**: VMs configured to auto-shutdown at 11 PM UTC daily
 - **No license costs**: Using evaluation mode within grace period
 
 ## Important Notes
@@ -104,6 +120,23 @@ This will prompt for confirmation and optionally clean up local Terraform files.
 4. **No persistent data** - Save test results externally before destroying VM
 
 ## Troubleshooting
+
+### VM Size Not Available (SkuNotAvailable)
+If you see `SkuNotAvailable` error, the VM size isn't available in your region.
+
+First, check what's available:
+```bash
+# Check all regions and VM sizes
+./scripts/check-availability.sh
+
+# Check a specific region
+./scripts/check-availability.sh centralus
+```
+
+Then deploy with an available combination:
+```bash
+./scripts/deploy.sh 2019 centralus Standard_D2s_v3
+```
 
 ### Spot VM Eviction
 If Azure evicts your Spot VM, simply create a new one. This is expected behavior.

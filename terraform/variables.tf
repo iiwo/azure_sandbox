@@ -19,7 +19,7 @@ variable "vm_name" {
 }
 
 variable "vm_size" {
-  description = "Size of the VM (Standard_D2s_v3 has better Spot availability)"
+  description = "Size of the VM. Alternatives if unavailable: Standard_D2s_v5, Standard_D2as_v5, Standard_B2ms"
   type        = string
   default     = "Standard_D2s_v3"
 }
@@ -55,7 +55,7 @@ variable "use_spot_vm" {
 variable "auto_shutdown_time" {
   description = "Auto-shutdown time in HH:MM format (24-hour, UTC)"
   type        = string
-  default     = "1900"  # 7 PM UTC
+  default     = "2300"  # 11 PM UTC
 }
 
 variable "auto_shutdown_enabled" {
